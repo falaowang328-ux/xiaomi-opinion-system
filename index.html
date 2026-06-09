@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>小米汽车舆情危机预警系统</title>
+
+  <!-- ECharts 可视化库 -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Microsoft YaHei", Arial;
+      background: #f5f7fa;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 8px #ddd;
+    }
+
+    .num {
+      font-size: 32px;
+      font-weight: bold;
+      color: #409eff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    th {
+      background: #409eff;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #409eff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .section {
+      background: white;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 8px;
+    }
+
+    .chart-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .chart-box {
+      width: 50%;
+      height: 360px;
+      background: white;
+    }
+
+    .result-box {
+      background: #f0f9eb;
+      border: 1px solid #b7eb8f;
+      padding: 15px;
+      margin-top: 15px;
+      line-height: 1.8;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: white;
+      background: #409eff;
+      margin-right: 5px;
+    }
+
+    .high {
+      background: #f56c6c;
+    }
+
+    .middle {
+      background: #e6a23c;
+    }
+
+    .low {
+      background: #67c23a;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>小米汽车品牌舆情危机 AI 预警系统</h1>
+
+<div class="cards">
+  <div class="card">
+    <div class="num" id="total">0</div>
+    <div>舆情总数</div>
+  </div>
+
+  <div class="card">
+    <div class="num" id="highRisk">0</div>
+    <div>高风险舆情</div>
+  </div>
+
+  <div class="card">
+    <div class="num" id="mediumRisk">0</div>
+    <div>中风险舆情</div>
+  </div>
+
+  <div class="card">
+    <div class="num" id="negative">0</div>
+    <div>负面舆情</div>
+  </div>
+</div>
+
+<!-- 新增：可视化部分 -->
+<div class="section">
+  <h2>舆情可视化分析</h2>
+
+  <div class="chart-row">
+    <div id="sentimentChart" class="chart-box"></div>
+    <div id="riskChart" class="chart-box"></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>危机预警列表</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>平台</th>
+        <th>舆情内容</th>
+        <th>情感</th>
+        <th>风险分数</th>
+        <th>风险等级</th>
+        <th>关键词</th>
+      </tr>
+    </thead>
+
+    <tbody id="warningTable"></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>舆情数据列表</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>平台</th>
+        <th>标题</th>
+        <th>内容</th>
+        <th>情感</th>
+        <th>风险分数</th>
+        <th>风险等级</th>
+      </tr>
+    </thead>
+
+    <tbody id="opinionTable"></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>AI 自动识别 + 自动应对话术生成</h2>
+
+  <label>输入新的舆情内容：</label>
+
+  <textarea
+    id="content"
+    rows="5"
+    placeholder="例如：有用户投诉小米SU7刹车失控并发生碰撞事故，希望官方尽快回应。"
+  ></textarea>
+
+  <button onclick="autoGenerate()">自动分析并生成回应话术</button>
+
+  <div id="autoResult" class="result-box" style="display:none;">
+    <h3>自动分析结果</h3>
+
+    <p>
+      <strong>情感倾向：</strong>
+      <span id="sentimentResult" class="tag"></span>
+    </p>
+
+    <p>
+      <strong>关键词：</strong>
+      <span id="keywordsResult"></span>
+    </p>
+
+    <p>
+      <strong>风险分数：</strong>
+      <span id="riskScoreResult"></span>
+    </p>
+
+    <p>
+      <strong>风险等级：</strong>
+      <span id="riskLevelResult" class="tag"></span>
+    </p>
+
+    <p>
+      <strong>AI自动回应话术：</strong>
+    </p>
+
+    <p id="responseResult"></p>
+  </div>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+
+async function loadStatistics() {
+  const res = await fetch(`${API_BASE}/api/statistics`);
+  const json = await res.json();
+
+  if (json.code === 200) {
+    const data = json.data;
+
+    document.getElementById("total").innerText = data.total;
+    document.getElementById("highRisk").innerText = data.high_risk_count;
+    document.getElementById("mediumRisk").innerText = data.medium_risk_count;
+    document.getElementById("negative").innerText = data.negative_count;
+  }
+}
+
+async function loadWarnings() {
+  const res = await fetch(`${API_BASE}/api/warnings`);
+  const json = await res.json();
+
+  const tbody = document.getElementById("warningTable");
+  tbody.innerHTML = "";
+
+  if (json.code === 200) {
+    json.data.slice(0, 20).forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.platform || ""}</td>
+          <td>${item.content_clean || ""}</td>
+          <td>${item.sentiment || ""}</td>
+          <td>${item.risk_score || ""}</td>
+          <td>${item.risk_level || ""}</td>
+          <td>${item.keywords || ""}</td>
+        </tr>
+      `;
+    });
+  }
+}
+
+async function loadOpinions() {
+  const res = await fetch(`${API_BASE}/api/opinions`);
+  const json = await res.json();
+
+  const tbody = document.getElementById("opinionTable");
+  tbody.innerHTML = "";
+
+  if (json.code === 200) {
+    json.data.slice(0, 30).forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${item.platform || ""}</td>
+          <td>${item.title || ""}</td>
+          <td>${item.content_clean || ""}</td>
+          <td>${item.sentiment || ""}</td>
+          <td>${item.risk_score || ""}</td>
+          <td>${item.risk_level || ""}</td>
+        </tr>
+      `;
+    });
+  }
+}
+
+async function loadCharts() {
+  const res = await fetch(`${API_BASE}/api/statistics`);
+  const json = await res.json();
+
+  if (json.code !== 200) {
+    return;
+  }
+
+  const data = json.data;
+
+  // 情感分布饼图
+  const sentimentChart = echarts.init(
+    document.getElementById("sentimentChart")
+  );
+
+  const sentimentData = Object.entries(data.sentiment_count || {}).map(
+    ([name, value]) => {
+      return {
+        name: name,
+        value: value
+      };
+    }
+  );
+
+  sentimentChart.setOption({
+    title: {
+      text: "情感分布",
+      left: "center"
+    },
+    tooltip: {
+      trigger: "item"
+    },
+    legend: {
+      bottom: 0
+    },
+    series: [
+      {
+        type: "pie",
+        radius: "60%",
+        data: sentimentData
+      }
+    ]
+  });
+
+  // 风险等级柱状图
+  const riskChart = echarts.init(
+    document.getElementById("riskChart")
+  );
+
+  const riskCount = data.risk_count || {};
+
+  riskChart.setOption({
+    title: {
+      text: "风险等级分布",
+      left: "center"
+    },
+    tooltip: {},
+    xAxis: {
+      type: "category",
+      data: Object.keys(riskCount)
+    },
+    yAxis: {
+      type: "value"
+    },
+    series: [
+      {
+        type: "bar",
+        data: Object.values(riskCount)
+      }
+    ]
+  });
+}
+
+async function autoGenerate() {
+  const content = document.getElementById("content").value.trim();
+
+  if (!content) {
+    alert("请输入舆情内容");
+    return;
+  }
+
+  const res = await fetch(`${API_BASE}/api/add-opinion`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      content: content
+    })
+  });
+
+  const json = await res.json();
+
+  if (json.code === 200) {
+    const data = json.data;
+
+    document.getElementById("autoResult").style.display = "block";
+
+    document.getElementById("sentimentResult").innerText = data.sentiment;
+    document.getElementById("keywordsResult").innerText = data.keywords;
+    document.getElementById("riskScoreResult").innerText = data.risk_score;
+    document.getElementById("riskLevelResult").innerText = data.risk_level;
+    document.getElementById("responseResult").innerText = data.generated_response;
+
+    const riskTag = document.getElementById("riskLevelResult");
+    riskTag.className = "tag";
+
+    if (data.risk_level === "高风险") {
+      riskTag.classList.add("high");
+    } else if (data.risk_level === "中风险") {
+      riskTag.classList.add("middle");
+    } else {
+      riskTag.classList.add("low");
+    }
+
+    alert("新增舆情成功，数据和可视化图表已更新");
+
+    loadStatistics();
+    loadWarnings();
+    loadOpinions();
+    loadCharts();
+
+  } else {
+    alert("自动分析失败，请检查后端接口");
+  }
+}
+
+loadStatistics();
+loadWarnings();
+loadOpinions();
+loadCharts();
+</script>
+
+</body>
+</html>
