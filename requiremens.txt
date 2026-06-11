@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pandas
+pydantic
+snownlp
+jieba
+requests
+beautifulsoup4
+schedule
+numpy
