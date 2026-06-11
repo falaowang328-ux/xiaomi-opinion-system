@@ -12,10 +12,18 @@
       font-family: "Microsoft YaHei", Arial;
       background: #f5f7fa;
       padding: 30px;
+      color: #222;
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+      border-left: 5px solid #409eff;
+      padding-left: 10px;
     }
 
     .cards {
@@ -28,15 +36,59 @@
       flex: 1;
       background: white;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       text-align: center;
       box-shadow: 0 2px 8px #ddd;
     }
 
     .num {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: bold;
       color: #409eff;
+    }
+
+    .section {
+      background: white;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #e6e6e6;
+    }
+
+    .chart-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .chart-box {
+      width: 33.3%;
+      height: 360px;
+      background: white;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #409eff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #337ecc;
     }
 
     table {
@@ -50,6 +102,7 @@
       border: 1px solid #ddd;
       padding: 8px;
       font-size: 14px;
+      line-height: 1.5;
     }
 
     th {
@@ -57,38 +110,8 @@
       color: white;
     }
 
-    textarea {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
-      font-size: 15px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #409eff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .section {
-      background: white;
-      padding: 20px;
-      margin-top: 30px;
-      border-radius: 8px;
-    }
-
-    .chart-row {
-      display: flex;
-      gap: 20px;
-    }
-
-    .chart-box {
-      width: 50%;
-      height: 360px;
-      background: white;
+    tr:nth-child(even) {
+      background: #fafafa;
     }
 
     .result-box {
@@ -97,6 +120,16 @@
       padding: 15px;
       margin-top: 15px;
       line-height: 1.8;
+      border-radius: 6px;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #c6e2ff;
+      padding: 15px;
+      border-radius: 6px;
+      line-height: 1.8;
+      font-size: 15px;
     }
 
     .tag {
@@ -119,6 +152,37 @@
     .low {
       background: #67c23a;
     }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .toolbar input {
+      flex: 1;
+    }
+
+    .small-note {
+      color: #777;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    @media screen and (max-width: 900px) {
+      .cards {
+        flex-direction: column;
+      }
+
+      .chart-row {
+        flex-direction: column;
+      }
+
+      .chart-box {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
@@ -126,6 +190,7 @@
 
 <h1>小米汽车品牌舆情危机 AI 预警系统</h1>
 
+<!-- 统计卡片 -->
 <div class="cards">
   <div class="card">
     <div class="num" id="total">0</div>
@@ -148,54 +213,26 @@
   </div>
 </div>
 
-<!-- 新增：可视化部分 -->
+<!-- 可视化分析 -->
 <div class="section">
   <h2>舆情可视化分析</h2>
 
   <div class="chart-row">
     <div id="sentimentChart" class="chart-box"></div>
     <div id="riskChart" class="chart-box"></div>
+    <div id="clusterChart" class="chart-box"></div>
   </div>
 </div>
 
+<!-- 企业问题总结 -->
 <div class="section">
-  <h2>危机预警列表</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>平台</th>
-        <th>舆情内容</th>
-        <th>情感</th>
-        <th>风险分数</th>
-        <th>风险等级</th>
-        <th>关键词</th>
-      </tr>
-    </thead>
-
-    <tbody id="warningTable"></tbody>
-  </table>
+  <h2>企业问题总结</h2>
+  <div id="problemSummary" class="summary-box">
+    正在加载问题总结……
+  </div>
 </div>
 
-<div class="section">
-  <h2>舆情数据列表</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>平台</th>
-        <th>标题</th>
-        <th>内容</th>
-        <th>情感</th>
-        <th>风险分数</th>
-        <th>风险等级</th>
-      </tr>
-    </thead>
-
-    <tbody id="opinionTable"></tbody>
-  </table>
-</div>
-
+<!-- AI自动分析 -->
 <div class="section">
   <h2>AI 自动识别 + 自动应对话术生成</h2>
 
@@ -208,6 +245,10 @@
   ></textarea>
 
   <button onclick="autoGenerate()">自动分析并生成回应话术</button>
+
+  <div class="small-note">
+    说明：点击后，系统会自动识别情感、关键词、风险等级，并把该舆情加入数据表，刷新图表和问题总结。
+  </div>
 
   <div id="autoResult" class="result-box" style="display:none;">
     <h3>自动分析结果</h3>
@@ -233,149 +274,322 @@
     </p>
 
     <p>
-      <strong>AI自动回应话术：</strong>
+      <strong>主题类别：</strong>
+      <span id="clusterResult"></span>
+    </p>
+
+    <p>
+      <strong>AI 自动回应话术：</strong>
     </p>
 
     <p id="responseResult"></p>
   </div>
 </div>
 
+<!-- 危机预警列表 -->
+<div class="section">
+  <h2>危机预警列表</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>平台</th>
+        <th>舆情内容</th>
+        <th>情感</th>
+        <th>风险分数</th>
+        <th>风险等级</th>
+        <th>关键词</th>
+      </tr>
+    </thead>
+
+    <tbody id="warningTable"></tbody>
+  </table>
+</div>
+
+<!-- 舆情数据列表 -->
+<div class="section">
+  <h2>舆情数据列表</h2>
+
+  <div class="toolbar">
+    <input id="searchInput" placeholder="输入关键词搜索舆情，例如：刹车、交付、智驾、事故">
+    <button onclick="searchOpinions()">搜索</button>
+    <button onclick="resetSearch()">重置</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>平台</th>
+        <th>标题</th>
+        <th>内容</th>
+        <th>情感</th>
+        <th>风险分数</th>
+        <th>风险等级</th>
+      </tr>
+    </thead>
+
+    <tbody id="opinionTable"></tbody>
+  </table>
+</div>
+
 <script>
 const API_BASE = "http://127.0.0.1:8000";
 
+let allOpinions = [];
+
+// ------------------------------
+// 1. 加载统计数据
+// ------------------------------
 async function loadStatistics() {
-  const res = await fetch(`${API_BASE}/api/statistics`);
-  const json = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/statistics`);
+    const json = await res.json();
 
-  if (json.code === 200) {
-    const data = json.data;
+    if (json.code === 200) {
+      const data = json.data;
 
-    document.getElementById("total").innerText = data.total;
-    document.getElementById("highRisk").innerText = data.high_risk_count;
-    document.getElementById("mediumRisk").innerText = data.medium_risk_count;
-    document.getElementById("negative").innerText = data.negative_count;
+      document.getElementById("total").innerText = data.total || 0;
+      document.getElementById("highRisk").innerText = data.high_risk_count || 0;
+      document.getElementById("mediumRisk").innerText = data.medium_risk_count || 0;
+      document.getElementById("negative").innerText = data.negative_count || 0;
+    }
+  } catch (error) {
+    console.error("统计数据加载失败：", error);
   }
 }
 
+// ------------------------------
+// 2. 加载危机预警列表
+// ------------------------------
 async function loadWarnings() {
-  const res = await fetch(`${API_BASE}/api/warnings`);
-  const json = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/warnings`);
+    const json = await res.json();
 
-  const tbody = document.getElementById("warningTable");
-  tbody.innerHTML = "";
+    const tbody = document.getElementById("warningTable");
+    tbody.innerHTML = "";
 
-  if (json.code === 200) {
-    json.data.slice(0, 20).forEach(item => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${item.platform || ""}</td>
-          <td>${item.content_clean || ""}</td>
-          <td>${item.sentiment || ""}</td>
-          <td>${item.risk_score || ""}</td>
-          <td>${item.risk_level || ""}</td>
-          <td>${item.keywords || ""}</td>
-        </tr>
-      `;
-    });
+    if (json.code === 200) {
+      json.data.slice(0, 20).forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.platform || ""}</td>
+            <td>${item.content_clean || item.content || ""}</td>
+            <td>${item.sentiment || ""}</td>
+            <td>${item.risk_score || ""}</td>
+            <td>${item.risk_level || ""}</td>
+            <td>${item.keywords || ""}</td>
+          </tr>
+        `;
+      });
+    }
+  } catch (error) {
+    console.error("预警数据加载失败：", error);
   }
 }
 
+// ------------------------------
+// 3. 加载舆情数据列表
+// ------------------------------
 async function loadOpinions() {
-  const res = await fetch(`${API_BASE}/api/opinions`);
-  const json = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/opinions`);
+    const json = await res.json();
 
+    if (json.code === 200) {
+      allOpinions = json.data || [];
+      renderOpinionTable(allOpinions.slice(0, 30));
+    }
+  } catch (error) {
+    console.error("舆情数据加载失败：", error);
+  }
+}
+
+function renderOpinionTable(data) {
   const tbody = document.getElementById("opinionTable");
   tbody.innerHTML = "";
 
-  if (json.code === 200) {
-    json.data.slice(0, 30).forEach(item => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${item.platform || ""}</td>
-          <td>${item.title || ""}</td>
-          <td>${item.content_clean || ""}</td>
-          <td>${item.sentiment || ""}</td>
-          <td>${item.risk_score || ""}</td>
-          <td>${item.risk_level || ""}</td>
-        </tr>
-      `;
-    });
-  }
+  data.forEach(item => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.platform || ""}</td>
+        <td>${item.title || ""}</td>
+        <td>${item.content_clean || item.content || ""}</td>
+        <td>${item.sentiment || ""}</td>
+        <td>${item.risk_score || ""}</td>
+        <td>${item.risk_level || ""}</td>
+      </tr>
+    `;
+  });
 }
 
-async function loadCharts() {
-  const res = await fetch(`${API_BASE}/api/statistics`);
-  const json = await res.json();
+// ------------------------------
+// 4. 舆情搜索
+// ------------------------------
+function searchOpinions() {
+  const keyword = document.getElementById("searchInput").value.trim();
 
-  if (json.code !== 200) {
+  if (!keyword) {
+    renderOpinionTable(allOpinions.slice(0, 30));
     return;
   }
 
-  const data = json.data;
+  const result = allOpinions.filter(item => {
+    const text = `
+      ${item.title || ""}
+      ${item.content_clean || ""}
+      ${item.content || ""}
+      ${item.keywords || ""}
+      ${item.cluster_name || ""}
+    `;
 
-  // 情感分布饼图
-  const sentimentChart = echarts.init(
-    document.getElementById("sentimentChart")
-  );
-
-  const sentimentData = Object.entries(data.sentiment_count || {}).map(
-    ([name, value]) => {
-      return {
-        name: name,
-        value: value
-      };
-    }
-  );
-
-  sentimentChart.setOption({
-    title: {
-      text: "情感分布",
-      left: "center"
-    },
-    tooltip: {
-      trigger: "item"
-    },
-    legend: {
-      bottom: 0
-    },
-    series: [
-      {
-        type: "pie",
-        radius: "60%",
-        data: sentimentData
-      }
-    ]
+    return text.includes(keyword);
   });
 
-  // 风险等级柱状图
-  const riskChart = echarts.init(
-    document.getElementById("riskChart")
-  );
-
-  const riskCount = data.risk_count || {};
-
-  riskChart.setOption({
-    title: {
-      text: "风险等级分布",
-      left: "center"
-    },
-    tooltip: {},
-    xAxis: {
-      type: "category",
-      data: Object.keys(riskCount)
-    },
-    yAxis: {
-      type: "value"
-    },
-    series: [
-      {
-        type: "bar",
-        data: Object.values(riskCount)
-      }
-    ]
-  });
+  renderOpinionTable(result.slice(0, 50));
 }
 
+function resetSearch() {
+  document.getElementById("searchInput").value = "";
+  renderOpinionTable(allOpinions.slice(0, 30));
+}
+
+// ------------------------------
+// 5. 加载可视化图表
+// ------------------------------
+async function loadCharts() {
+  try {
+    const res = await fetch(`${API_BASE}/api/statistics`);
+    const json = await res.json();
+
+    if (json.code !== 200) {
+      return;
+    }
+
+    const data = json.data;
+
+    // 情感分布饼图
+    const sentimentChart = echarts.init(
+      document.getElementById("sentimentChart")
+    );
+
+    const sentimentData = Object.entries(data.sentiment_count || {}).map(
+      ([name, value]) => {
+        return {
+          name: name,
+          value: value
+        };
+      }
+    );
+
+    sentimentChart.setOption({
+      title: {
+        text: "情感分布",
+        left: "center"
+      },
+      tooltip: {
+        trigger: "item"
+      },
+      legend: {
+        bottom: 0
+      },
+      series: [
+        {
+          type: "pie",
+          radius: "60%",
+          data: sentimentData
+        }
+      ]
+    });
+
+    // 风险等级柱状图
+    const riskChart = echarts.init(
+      document.getElementById("riskChart")
+    );
+
+    const riskCount = data.risk_count || {};
+
+    riskChart.setOption({
+      title: {
+        text: "风险等级分布",
+        left: "center"
+      },
+      tooltip: {},
+      xAxis: {
+        type: "category",
+        data: Object.keys(riskCount)
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          type: "bar",
+          data: Object.values(riskCount)
+        }
+      ]
+    });
+
+    // 主题类别柱状图
+    const clusterChart = echarts.init(
+      document.getElementById("clusterChart")
+    );
+
+    const clusterCount = data.cluster_count || {};
+
+    clusterChart.setOption({
+      title: {
+        text: "主题类别分布",
+        left: "center"
+      },
+      tooltip: {},
+      xAxis: {
+        type: "category",
+        data: Object.keys(clusterCount),
+        axisLabel: {
+          rotate: 30
+        }
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          type: "bar",
+          data: Object.values(clusterCount)
+        }
+      ]
+    });
+
+  } catch (error) {
+    console.error("图表加载失败：", error);
+  }
+}
+
+// ------------------------------
+// 6. 加载企业问题总结
+// ------------------------------
+async function loadProblemSummary() {
+  try {
+    const res = await fetch(`${API_BASE}/api/problem-summary`);
+    const json = await res.json();
+
+    if (json.code === 200) {
+      document.getElementById("problemSummary").innerText =
+        json.data.summary;
+    } else {
+      document.getElementById("problemSummary").innerText =
+        "暂无问题总结，请先确认后端是否已添加 /api/problem-summary 接口。";
+    }
+  } catch (error) {
+    document.getElementById("problemSummary").innerText =
+      "问题总结接口暂未连接，请检查后端 /api/problem-summary 是否已启动。";
+  }
+}
+
+// ------------------------------
+// 7. 新增舆情 + 自动分析 + 自动刷新
+// ------------------------------
 async function autoGenerate() {
   const content = document.getElementById("content").value.trim();
 
@@ -384,56 +598,69 @@ async function autoGenerate() {
     return;
   }
 
-  const res = await fetch(`${API_BASE}/api/add-opinion`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      content: content
-    })
-  });
+  try {
+    const res = await fetch(`${API_BASE}/api/add-opinion`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content: content
+      })
+    });
 
-  const json = await res.json();
+    const json = await res.json();
 
-  if (json.code === 200) {
-    const data = json.data;
+    if (json.code === 200) {
+      const data = json.data;
 
-    document.getElementById("autoResult").style.display = "block";
+      document.getElementById("autoResult").style.display = "block";
 
-    document.getElementById("sentimentResult").innerText = data.sentiment;
-    document.getElementById("keywordsResult").innerText = data.keywords;
-    document.getElementById("riskScoreResult").innerText = data.risk_score;
-    document.getElementById("riskLevelResult").innerText = data.risk_level;
-    document.getElementById("responseResult").innerText = data.generated_response;
+      document.getElementById("sentimentResult").innerText = data.sentiment;
+      document.getElementById("keywordsResult").innerText = data.keywords;
+      document.getElementById("riskScoreResult").innerText = data.risk_score;
+      document.getElementById("riskLevelResult").innerText = data.risk_level;
+      document.getElementById("clusterResult").innerText = data.cluster_name || "";
+      document.getElementById("responseResult").innerText = data.generated_response;
 
-    const riskTag = document.getElementById("riskLevelResult");
-    riskTag.className = "tag";
+      const riskTag = document.getElementById("riskLevelResult");
+      riskTag.className = "tag";
 
-    if (data.risk_level === "高风险") {
-      riskTag.classList.add("high");
-    } else if (data.risk_level === "中风险") {
-      riskTag.classList.add("middle");
+      if (data.risk_level === "高风险") {
+        riskTag.classList.add("high");
+      } else if (data.risk_level === "中风险") {
+        riskTag.classList.add("middle");
+      } else {
+        riskTag.classList.add("low");
+      }
+
+      alert("新增舆情成功，数据、图表和问题总结已更新");
+
+      await refreshAll();
+
     } else {
-      riskTag.classList.add("low");
+      alert("自动分析失败：" + (json.message || "请检查后端接口"));
     }
 
-    alert("新增舆情成功，数据和可视化图表已更新");
-
-    loadStatistics();
-    loadWarnings();
-    loadOpinions();
-    loadCharts();
-
-  } else {
-    alert("自动分析失败，请检查后端接口");
+  } catch (error) {
+    alert("请求失败，请确认后端服务已启动。");
+    console.error(error);
   }
 }
 
-loadStatistics();
-loadWarnings();
-loadOpinions();
-loadCharts();
+// ------------------------------
+// 8. 统一刷新
+// ------------------------------
+async function refreshAll() {
+  await loadStatistics();
+  await loadWarnings();
+  await loadOpinions();
+  await loadCharts();
+  await loadProblemSummary();
+}
+
+// 页面初始化
+refreshAll();
 </script>
 
 </body>
