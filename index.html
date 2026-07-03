@@ -658,9 +658,13 @@ async function refreshAll() {
   await loadCharts();
   await loadProblemSummary();
 }
-
 // 页面初始化
 refreshAll();
+// 每 10 分钟自动刷新一次前端数据
+setInterval(() => {
+  console.log("自动刷新数据：", new Date().toLocaleString());
+  refreshAll();
+}, 10 * 60 * 1000); 
 </script>
 
 </body>
