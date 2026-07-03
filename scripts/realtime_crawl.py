@@ -22,7 +22,8 @@ from datetime import datetime
 # 1. 数据保存路径
 # =========================
 
-DATA_PATH = r"C:\Users\FALAOWANG\Desktop\xiaomi-opinion-system\data\baidu_realtime_data.csv"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_PATH = os.path.join(BASE_DIR, "data", "baidu_realtime_data.csv")
 
 
 # =========================
