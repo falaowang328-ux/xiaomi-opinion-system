@@ -17,9 +17,11 @@ import os
 # 1. 文件路径
 # =========================
 
-input_path = r"C:\Users\FALAOWANG\Desktop\xiaomi-opinion-system\data\baidu_realtime_data.csv"
-output_path = r"C:\Users\FALAOWANG\Desktop\xiaomi-opinion-system\data\response_data.csv"
-summary_path = r"C:\Users\FALAOWANG\Desktop\xiaomi-opinion-system\data\problem_summary.txt"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+input_path = os.path.join(BASE_DIR, "data", "baidu_realtime_data.csv")
+output_path = os.path.join(BASE_DIR, "data", "response_data.csv")
+summary_path = os.path.join(BASE_DIR, "data", "problem_summary.txt")
 
 
 # =========================
